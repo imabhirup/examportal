@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CCDV-F Practice Exam</title>
+<style>
+:root{
+  --bg:#f4f6fa; --card:#ffffff; --ink:#0f1a2b; --muted:#566377; --line:#d9e0ea;
+  --accent:#1f4fd8; --accent-ink:#ffffff; --accent-soft:#e6edff;
+  --ok:#16794a; --ok-soft:#e3f5ec; --bad:#b42318; --bad-soft:#fdeceb; --warn:#9a5b00; --warn-soft:#fff3dc;
+  --radius:10px;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --serif:Charter,"Iowan Old Style","Palatino Linotype",Georgia,serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0e141f; --card:#162030; --ink:#e8eef8; --muted:#9aa8bd; --line:#2a384d;
+    --accent:#7aa2ff; --accent-ink:#0b1220; --accent-soft:#1c2b4d;
+    --ok:#5fd29a; --ok-soft:#10301f; --bad:#ff8f84; --bad-soft:#3a1714; --warn:#ffc266; --warn-soft:#3a2a0c;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;font-size:16px}
+.wrap{max-width:780px;margin:0 auto;padding:16px 16px 80px}
+h1{font-size:1.9rem;line-height:1.2;margin:8px 0 8px;font-family:var(--serif)}
+h2{font-size:1.2rem;margin:0 0 12px}
+p{margin:0 0 12px}
+.muted{color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn{border:1px solid var(--line);background:var(--card);padding:10px 16px;border-radius:8px;font-weight:600;min-height:44px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row.between{justify-content:space-between}
+.setting{display:flex;gap:10px;align-items:flex-start;margin:10px 0}
+.setting input[type=checkbox]{width:20px;height:20px;margin-top:2px}
+.setting input[type=number]{width:80px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);margin-bottom:14px}
+.bar .row{justify-content:space-between}
+.timer{font-variant-numeric:tabular-nums;font-weight:700}
+.timer.low{color:var(--bad)}
+progress{width:100%;height:6px;margin-top:8px;border:0;border-radius:4px;overflow:hidden;background:var(--line);accent-color:var(--accent)}
+progress::-webkit-progress-bar{background:var(--line)}
+progress::-webkit-progress-value{background:var(--accent)}
+progress::-moz-progress-bar{background:var(--accent)}
+.stem{font-family:var(--serif);font-size:1.18rem;line-height:1.55;margin:0 0 18px}
+.opts{display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;padding:12px 14px;border:1.5px solid var(--line);border-radius:var(--radius);background:var(--card)}
+.opt .ltr{flex:0 0 28px;height:28px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-weight:700;font-size:.85rem}
+.opt .txt{flex:1;padding-top:2px}
+.opt:hover{border-color:var(--accent)}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.opt.sel .ltr{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.opt.correct{border-color:var(--ok);background:var(--ok-soft)}
+.opt.correct .ltr{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt.wrong .ltr{background:var(--bad);border-color:var(--bad);color:#fff}
+.opt[disabled]{cursor:default}
+.tag{display:inline-block;font-size:.78rem;font-weight:700;padding:1px 8px;border-radius:99px;margin-left:8px;vertical-align:1px}
+.tag.ok{background:var(--ok);color:#fff}
+.tag.bad{background:var(--bad);color:#fff}
+.nav{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:6px;margin-top:6px}
+.nav button{height:40px;border:1px solid var(--line);background:var(--card);border-radius:6px;font-weight:600;font-variant-numeric:tabular-nums;position:relative}
+.nav button.ans{background:var(--accent-soft);border-color:var(--accent)}
+.nav button.cur{outline:3px solid var(--accent);outline-offset:1px}
+.nav button.flag::after{content:"";position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:50%;background:var(--warn)}
+.nav button.ok{background:var(--ok-soft);border-color:var(--ok)}
+.nav button.bad{background:var(--bad-soft);border-color:var(--bad)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem;color:var(--muted);margin-top:10px}
+.score{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.big{font-size:3rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;padding:4px 12px;border-radius:99px;font-weight:700;font-size:.9rem}
+.pill.ok{background:var(--ok-soft);color:var(--ok);border:1px solid var(--ok)}
+.pill.bad{background:var(--warn-soft);color:var(--warn);border:1px solid var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:.82rem;color:var(--muted);font-weight:600}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.meter{height:8px;background:var(--line);border-radius:4px;overflow:hidden;min-width:70px}
+.meter i{display:block;height:100%;background:var(--ok)}
+.meter i.low{background:var(--bad)}
+.meter i.mid{background:var(--warn)}
+.table-scroll{overflow-x:auto}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 16px}
+.filters .btn{padding:6px 12px;min-height:36px;font-size:.9rem}
+.filters .btn.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.rq{border-left:5px solid var(--line)}
+.rq.ok{border-left-color:var(--ok)}
+.rq.bad{border-left-color:var(--bad)}
+.rq .head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;font-size:.88rem;color:var(--muted)}
+.expl{margin-top:14px;padding:12px 14px;border-radius:8px;background:var(--accent-soft);font-size:.95rem}
+.expl b{display:block;margin-bottom:2px}
+.notice{padding:10px 14px;border-radius:8px;background:var(--warn-soft);color:var(--warn);font-size:.9rem;margin-bottom:14px}
+.sr{position:absolute;left:-9999px}
+@media (max-width:520px){.big{font-size:2.4rem}.stem{font-size:1.08rem}.card{padding:16px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script src="questions.js"></script>
+<script>
+(function(){
+"use strict";
+var Q = window.QUESTIONS || [];
+var PRIOR = window.PRIOR || {};
+var KEY = "ccdvf-practice-exam-v1";
+var LETTERS = ["A","B","C","D"];
+var TARGET = 80;      // practice target in percent (heuristic, not an official passing rule)
+var WEAK = 60;        // per-domain review threshold in percent
+var S = null;         // exam state
+var filter = "all";   // results filter
+var tick = null;
+
+var app = document.getElementById("app");
+
+/* ---------- helpers ---------- */
+function esc(t){return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function pad(n){return n<10?"0"+n:""+n;}
+function fmt(ms){var s=Math.max(0,Math.round(ms/1000));var h=Math.floor(s/3600),m=Math.floor((s%3600)/60);s=s%60;return (h?h+":"+pad(m):m)+":"+pad(s);}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function load(){try{var r=localStorage.getItem(KEY);return r?JSON.parse(r):null;}catch(e){return null;}}
+function wipe(){try{localStorage.removeItem(KEY);}catch(e){}}
+function isCorrect(i){return S.answers[i]===Q[i].a;}
+
+/* ---------- exam lifecycle ---------- */
+function startExam(opts){
+  var order = opts.subset && opts.subset.length ? opts.subset : Q.map(function(_,i){return i;});
+  S = {
+    order: order,
+    perms: Q.map(function(){return opts.shuffle?shuffle([0,1,2,3]):[0,1,2,3];}),
+    answers:{}, flags:{}, cur:0,
+    limit: opts.limit||0,
+    endsAt: opts.limit ? Date.now()+opts.limit*60000 : null,
+    startedAt: Date.now(), finishedAt:null, submitted:false, partial: !!opts.subset
+  };
+  filter="all"; save(); render();
+}
+function submitExam(auto){
+  if(!S || S.submitted) return;
+  if(!auto){
+    var left = S.order.filter(function(i){return S.answers[i]===undefined;}).length;
+    var msg = left ? "You have "+left+" unanswered question"+(left>1?"s":"")+". Submit anyway?" : "Submit your answers and see the results?";
+    if(!window.confirm(msg)) return;
+  }
+  S.submitted=true; S.finishedAt=Date.now(); save(); stopTimer(); window.scrollTo(0,0); render();
+}
+function stopTimer(){if(tick){clearInterval(tick);tick=null;}}
+function startTimer(){
+  stopTimer();
+  if(!S || S.submitted || !S.endsAt) return;
+  var update=function(){
+    var el=document.getElementById("timer"); if(!el) return;
+    var left=S.endsAt-Date.now();
+    el.textContent=fmt(left);
+    el.classList.toggle("low",left<5*60000);
+    if(left<=0){submitExam(true);}
+  };
+  update(); tick=setInterval(update,1000);
+}
+
+/* ---------- screens ---------- */
+function renderStart(){
+  var saved=load(), resume="";
+  if(saved && !saved.submitted){
+    var done=Object.keys(saved.answers).length;
+    resume='<div class="card"><h2>Resume your exam</h2><p class="muted">'+done+' of '+saved.order.length+' answered. The timer (if any) kept running while you were away.</p><div class="row"><button class="btn primary" data-act="resume">Resume</button><button class="btn" data-act="discard">Discard</button></div></div>';
+  } else if(saved && saved.submitted){
+    resume='<div class="card"><h2>Your last result</h2><p class="muted">Your previous attempt is saved in this browser.</p><button class="btn" data-act="showlast">View last result</button></div>';
+  }
+  app.innerHTML=
+   '<h1>CCDV-F Practice Exam</h1>'+
+   '<p class="muted">Claude Certified Developer Foundations. '+Q.length+' scenario-based questions across 25 domains. Choose the single best answer for each question.</p>'+
+   resume+
+   '<div class="card"><h2>Start a new attempt</h2>'+
+   '<label class="setting"><input type="checkbox" id="useTimer" checked><span><b>Timed exam</b><br><span class="muted">Minutes: </span><input type="number" id="mins" value="90" min="10" max="240" aria-label="Minutes"></span></label>'+
+   '<label class="setting"><input type="checkbox" id="shuf"><span><b>Shuffle answer options</b><br><span class="muted">Stops you memorizing the position of the right answer.</span></span></label>'+
+   '<div class="row" style="margin-top:14px"><button class="btn primary" data-act="start">Start exam</button></div>'+
+   '</div>'+
+   '<p class="muted" style="font-size:.88rem">Original practice questions, not official exam content. Your answers stay in this browser and are never uploaded. Product details change, so verify against the official Anthropic documentation.</p>';
+}
+
+function renderTest(){
+  var n=S.order.length, qi=S.order[S.cur], q=Q[qi], perm=S.perms[qi];
+  var answered=Object.keys(S.answers).length;
+  var opts=perm.map(function(orig,pos){
+    var sel=S.answers[qi]===orig;
+    return '<button class="opt'+(sel?' sel':'')+'" role="radio" aria-checked="'+sel+'" data-act="pick" data-o="'+orig+'"><span class="ltr">'+LETTERS[pos]+'</span><span class="txt">'+esc(q.o[orig])+'</span></button>';
+  }).join("");
+  var grid=S.order.map(function(i,k){
+    var c=[]; if(S.answers[i]!==undefined)c.push("ans"); if(S.flags[i])c.push("flag"); if(k===S.cur)c.push("cur");
+    return '<button class="'+c.join(" ")+'" data-act="go" data-k="'+k+'" aria-label="Question '+(k+1)+(S.answers[i]!==undefined?', answered':'')+(S.flags[i]?', flagged':'')+'">'+(k+1)+'</button>';
+  }).join("");
+  app.innerHTML=
+   '<div class="bar"><div class="row"><span><b>Question '+(S.cur+1)+'</b> of '+n+' &middot; '+answered+' answered</span>'+(S.endsAt?'<span class="timer" id="timer" aria-label="Time remaining"></span>':'')+'</div><progress max="'+n+'" value="'+answered+'" aria-label="Progress"></progress></div>'+
+   '<div class="card"><p class="stem">'+esc(q.q)+'</p><div class="opts" role="radiogroup" aria-label="Answer options">'+opts+'</div>'+
+   '<div class="row between" style="margin-top:18px"><button class="btn" data-act="prev"'+(S.cur===0?' disabled':'')+'>Previous</button>'+
+   '<button class="btn" data-act="flag">'+(S.flags[qi]?'Unflag':'Flag for review')+'</button>'+
+   (S.cur<n-1?'<button class="btn primary" data-act="next">Next</button>':'<button class="btn primary" data-act="submit">Finish and submit</button>')+'</div></div>'+
+   '<div class="card"><h2>Questions</h2><div class="nav">'+grid+'</div><div class="legend"><span>Blue: answered</span><span>Dot: flagged</span><span>Outlined: current</span></div>'+
+   '<div class="row" style="margin-top:14px"><button class="btn primary" data-act="submit">Submit exam</button><button class="btn" data-act="quit">Exit without scoring</button></div></div>';
+  startTimer();
+}
+
+function stats(){
+  var byDomain={}, correct=0, unanswered=0;
+  S.order.forEach(function(i){
+    var d=Q[i].d; var b=byDomain[d]||(byDomain[d]={d:d,t:0,c:0});
+    b.t++; if(isCorrect(i)){b.c++;correct++;} if(S.answers[i]===undefined)unanswered++;
+  });
+  var list=Object.keys(byDomain).map(function(k){var b=byDomain[k];b.p=Math.round(b.c/b.t*100);return b;}).sort(function(a,b){return a.p-b.p||a.d.localeCompare(b.d);});
+  return {correct:correct,total:S.order.length,unanswered:unanswered,domains:list,pct:Math.round(correct/S.order.length*100)};
+}
+
+function renderResults(){
+  var st=stats(), took=fmt((S.finishedAt||Date.now())-S.startedAt);
+  var met=st.pct>=TARGET;
+  var wrongIdx=S.order.filter(function(i){return !isCorrect(i);});
+  var weak=st.domains.filter(function(b){return b.p<WEAK;});
+
+  var rows=st.domains.map(function(b){
+    var cls=b.p<WEAK?"low":(b.p<TARGET?"mid":"");
+    var prior=PRIOR[b.d]; 
+    return '<tr><td>'+esc(b.d)+'</td><td class="num">'+b.c+'/'+b.t+'</td><td style="width:26%"><div class="meter" role="img" aria-label="'+b.p+' percent"><i class="'+cls+'" style="width:'+b.p+'%"></i></div></td><td class="num">'+b.p+'%</td><td class="num">'+(prior===undefined?'-':prior+'%')+'</td></tr>';
+  }).join("");
+
+  var grid=S.order.map(function(i,k){
+    var c=S.answers[i]===undefined?"":(isCorrect(i)?"ok":"bad");
+    return '<button class="'+c+'" data-act="jump" data-i="'+i+'" aria-label="Question '+(k+1)+': '+(S.answers[i]===undefined?'unanswered':(isCorrect(i)?'correct':'incorrect'))+'">'+(k+1)+'</button>';
+  }).join("");
+
+  var filters=[["all","All ("+st.total+")"],["wrong","Incorrect ("+(st.total-st.correct-st.unanswered)+")"],["unans","Unanswered ("+st.unanswered+")"],["right","Correct ("+st.correct+")"]].map(function(f){
+    return '<button class="btn'+(filter===f[0]?' on':'')+'" data-act="filter" data-f="'+f[0]+'">'+f[1]+'</button>';
+  }).join("");
+
+  var review=S.order.map(function(i,k){
+    var q=Q[i], ans=S.answers[i], ok=ans===q.a, un=ans===undefined;
+    if(filter==="wrong" && (ok||un)) return "";
+    if(filter==="unans" && !un) return "";
+    if(filter==="right" && !ok) return "";
+    var opts=S.perms[i].map(function(orig,pos){
+      var cls="", tag="";
+      if(orig===q.a){cls=" correct";tag='<span class="tag ok">Correct answer</span>';}
+      if(orig===ans && orig!==q.a){cls=" wrong";tag='<span class="tag bad">Your answer</span>';}
+      if(orig===ans && orig===q.a){tag='<span class="tag ok">Your answer, correct</span>';}
+      return '<div class="opt'+cls+'" role="listitem" style="cursor:default"><span class="ltr">'+LETTERS[pos]+'</span><span class="txt">'+esc(q.o[orig])+tag+'</span></div>';
+    }).join("");
+    var status=un?'Unanswered':(ok?'Correct':'Incorrect');
+    return '<div class="card rq '+(ok?'ok':'bad')+'" id="rq'+i+'"><div class="head"><span><b>Question '+(k+1)+'</b> &middot; '+esc(q.d)+'</span><span><b>'+status+'</b></span></div>'+
+      '<p class="stem">'+esc(q.q)+'</p><div class="opts" role="list">'+opts+'</div>'+
+      '<div class="expl"><b>Why</b>'+esc(q.e)+'</div></div>';
+  }).join("");
+  if(!review) review='<p class="muted">No questions match this filter.</p>';
+
+  app.innerHTML=
+   '<h1>Results</h1>'+
+   '<div class="card"><div class="score"><div><div class="big">'+st.correct+'<span class="muted" style="font-size:1.4rem">/'+st.total+'</span></div><div class="muted">'+st.pct+'% correct &middot; '+took+' elapsed</div></div>'+
+   '<div><span class="pill '+(met?'ok':'bad')+'">'+(met?'At or above':'Below')+' your '+TARGET+'% practice target</span>'+
+   '<p class="muted" style="margin:8px 0 0;font-size:.88rem">The real exam reports a scaled score (passing 720), so this percentage is only an estimate.</p></div></div>'+
+   (st.unanswered?'<p class="muted" style="margin:12px 0 0">'+st.unanswered+' unanswered question'+(st.unanswered>1?'s were':' was')+' counted as incorrect.</p>':'')+
+   '</div>'+
+   (weak.length?'<div class="notice"><b>Review first:</b> '+weak.map(function(b){return esc(b.d)+' ('+b.p+'%)';}).join(', ')+'</div>':'')+
+   '<div class="card"><h2>Score by domain</h2><div class="table-scroll"><table><thead><tr><th>Domain</th><th class="num">Correct</th><th></th><th class="num">Now</th><th class="num">Report</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+   '<p class="muted" style="font-size:.85rem;margin:10px 0 0">Report = your score on the original certification report. Domains are sorted weakest first.</p></div>'+
+   '<div class="card"><h2>Answer map</h2><div class="nav">'+grid+'</div><div class="legend"><span>Green: correct</span><span>Red: incorrect</span><span>Plain: unanswered</span></div></div>'+
+   '<div class="row" style="margin-bottom:16px"><button class="btn primary" data-act="again">Start a new attempt</button>'+
+   (wrongIdx.length?'<button class="btn" data-act="retrywrong">Retake '+wrongIdx.length+' missed question'+(wrongIdx.length>1?'s':'')+'</button>':'')+'</div>'+
+   '<h2>Review</h2><div class="filters" role="group" aria-label="Filter review">'+filters+'</div>'+review;
+}
+
+function render(){
+  stopTimer();
+  if(!S){renderStart();return;}
+  if(S.submitted){renderResults();return;}
+  renderTest();
+}
+
+/* ---------- events ---------- */
+app.addEventListener("click",function(e){
+  var t=e.target.closest("[data-act]"); if(!t) return;
+  var act=t.getAttribute("data-act"), qi;
+  if(act==="start"){
+    var useTimer=document.getElementById("useTimer").checked;
+    var mins=parseInt(document.getElementById("mins").value,10)||90;
+    startExam({limit:useTimer?Math.min(240,Math.max(10,mins)):0,shuffle:document.getElementById("shuf").checked});
+  }else if(act==="resume"){S=load();render();}
+  else if(act==="discard"){if(window.confirm("Discard the saved attempt?")){wipe();S=null;render();}}
+  else if(act==="showlast"){S=load();render();}
+  else if(act==="pick"){qi=S.order[S.cur];S.answers[qi]=parseInt(t.getAttribute("data-o"),10);save();render();}
+  else if(act==="next"){S.cur=Math.min(S.order.length-1,S.cur+1);save();render();window.scrollTo(0,0);}
+  else if(act==="prev"){S.cur=Math.max(0,S.cur-1);save();render();window.scrollTo(0,0);}
+  else if(act==="go"){S.cur=parseInt(t.getAttribute("data-k"),10);save();render();window.scrollTo(0,0);}
+  else if(act==="flag"){qi=S.order[S.cur];if(S.flags[qi])delete S.flags[qi];else S.flags[qi]=true;save();render();}
+  else if(act==="submit"){submitExam(false);}
+  else if(act==="quit"){if(window.confirm("Leave without scoring? Your progress stays saved so you can resume.")){stopTimer();S=null;render();}}
+  else if(act==="filter"){filter=t.getAttribute("data-f");render();}
+  else if(act==="jump"){filter="all";render();var el=document.getElementById("rq"+t.getAttribute("data-i"));if(el)el.scrollIntoView({behavior:"smooth",block:"start"});}
+  else if(act==="again"){wipe();S=null;render();window.scrollTo(0,0);}
+  else if(act==="retrywrong"){
+    var sub=S.order.filter(function(i){return !isCorrect(i);});
+    var prevLimit=0; startExam({subset:sub,limit:prevLimit,shuffle:true});window.scrollTo(0,0);
+  }
+});
+
+document.addEventListener("keydown",function(e){
+  if(!S||S.submitted) return;
+  var tag=(e.target&&e.target.tagName)||""; if(tag==="INPUT") return;
+  var k=e.key.toLowerCase(), qi=S.order[S.cur], pos=-1;
+  if("abcd".indexOf(k)>-1&&k.length===1) pos="abcd".indexOf(k);
+  else if("1234".indexOf(k)>-1&&k.length===1) pos="1234".indexOf(k);
+  if(pos>-1){S.answers[qi]=S.perms[qi][pos];save();render();return;}
+  if(e.key==="ArrowRight"&&S.cur<S.order.length-1){S.cur++;save();render();}
+  if(e.key==="ArrowLeft"&&S.cur>0){S.cur--;save();render();}
+});
+
+/* ---------- boot ---------- */
+if(!Q.length){app.innerHTML='<div class="card"><h2>Questions not found</h2><p>questions.js must sit next to index.html.</p></div>';return;}
+var existing=load();
+if(existing && !existing.submitted){ /* offer resume on the start screen */ }
+S=null; render();
+})();
+</script>
+</body>
+</html>
