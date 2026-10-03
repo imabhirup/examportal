@@ -109,7 +109,6 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:now
 (function(){
 "use strict";
 var Q = window.QUESTIONS || [];
-var PRIOR = window.PRIOR || {};
 var KEY = "ccdvf-practice-exam-v1";
 var LETTERS = ["A","B","C","D"];
 var TARGET = 80;      // practice target in percent (heuristic, not an official passing rule)
@@ -227,8 +226,7 @@ function renderResults(){
 
   var rows=st.domains.map(function(b){
     var cls=b.p<WEAK?"low":(b.p<TARGET?"mid":"");
-    var prior=PRIOR[b.d]; 
-    return '<tr><td>'+esc(b.d)+'</td><td class="num">'+b.c+'/'+b.t+'</td><td style="width:26%"><div class="meter" role="img" aria-label="'+b.p+' percent"><i class="'+cls+'" style="width:'+b.p+'%"></i></div></td><td class="num">'+b.p+'%</td><td class="num">'+(prior===undefined?'-':prior+'%')+'</td></tr>';
+    return '<tr><td>'+esc(b.d)+'</td><td class="num">'+b.c+'/'+b.t+'</td><td style="width:26%"><div class="meter" role="img" aria-label="'+b.p+' percent"><i class="'+cls+'" style="width:'+b.p+'%"></i></div></td><td class="num">'+b.p+'%</td></tr>';
   }).join("");
 
   var grid=S.order.map(function(i,k){
@@ -267,8 +265,8 @@ function renderResults(){
    (st.unanswered?'<p class="muted" style="margin:12px 0 0">'+st.unanswered+' unanswered question'+(st.unanswered>1?'s were':' was')+' counted as incorrect.</p>':'')+
    '</div>'+
    (weak.length?'<div class="notice"><b>Review first:</b> '+weak.map(function(b){return esc(b.d)+' ('+b.p+'%)';}).join(', ')+'</div>':'')+
-   '<div class="card"><h2>Score by domain</h2><div class="table-scroll"><table><thead><tr><th>Domain</th><th class="num">Correct</th><th></th><th class="num">Now</th><th class="num">Report</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
-   '<p class="muted" style="font-size:.85rem;margin:10px 0 0">Report = your score on the original certification report. Domains are sorted weakest first.</p></div>'+
+   '<div class="card"><h2>Score by domain</h2><div class="table-scroll"><table><thead><tr><th>Domain</th><th class="num">Correct</th><th></th><th class="num">Score</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+   '<p class="muted" style="font-size:.85rem;margin:10px 0 0">Domains are sorted weakest first.</p></div>'+
    '<div class="card"><h2>Answer map</h2><div class="nav">'+grid+'</div><div class="legend"><span>Green: correct</span><span>Red: incorrect</span><span>Plain: unanswered</span></div></div>'+
    '<div class="row" style="margin-bottom:16px"><button class="btn primary" data-act="again">Start a new attempt</button>'+
    (wrongIdx.length?'<button class="btn" data-act="retrywrong">Retake '+wrongIdx.length+' missed question'+(wrongIdx.length>1?'s':'')+'</button>':'')+'</div>'+
